@@ -6,6 +6,11 @@ public class BulletScript : MonoBehaviour {
 	public string faction;
 	public float damage;
 	public float apFactor;
+	public float life = 5;
+
+	void Start () {
+		Destroy(gameObject,life);
+	}
 
 	void OnTriggerEnter (Collider other) {
 

@@ -7,14 +7,7 @@ public class TerrainScript : MonoBehaviour {
 	Ray ray;
 	RaycastHit hit;
 	CameraScript camScript;
-	
-	// Use this for initialization
-	void Start () {
 
-		camScript = Camera.main.GetComponent<CameraScript>();
-
-	}
-	
 	// Update is called once per frame
 	void Update () {
 

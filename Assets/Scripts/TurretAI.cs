@@ -11,12 +11,15 @@ public class TurretAI : MonoBehaviour {
 	public float turnSpeed;
 	public float range;
 	public Transform model;
+	public float size = 0.5f;
 	Vector3 targetPos;
 	Collider[] nearbyColliders;
 	GameObject[] nearbyEnemies;
+	CharacterController targetC;
 
 	Transform[] muzzles;
 	public GameObject bulletType;
+	public GameObject fireParticle;
 	public float damage;
 	public float apFactor;
 	public float inaccuracy;
@@ -24,11 +27,15 @@ public class TurretAI : MonoBehaviour {
 	public float bulletForce;
 	public int amount;
 	public bool reloaded = true;
+
+	float bulletVel;
 	
 	// Use this for initialization
 	void Start () {
 
 		SearchRandom ();
+		bulletVel = (bulletForce/bulletType.rigidbody.mass)*Time.fixedDeltaTime;
+		size = GetComponent<SphereCollider>().radius;
 
 		model = transform.FindChild ("Turret").FindChild ("Model");
 		int index = 0;
@@ -70,14 +77,14 @@ public class TurretAI : MonoBehaviour {
 	void Update () {
 
 		if (target) {
-			targetPos = target.position;
-			Ray ray = new Ray (pointer.position,pointer.forward);
-			RaycastHit hit;
-			if (Physics.Raycast(ray, out hit, range)) {
-				if (hit.transform.tag == "Enemy") {
+			targetPos = CalculateFuturePosition(target.position,targetC.velocity,bulletVel);
+//			Ray ray = new Ray (pointer.position,pointer.forward);
+//			RaycastHit hit;
+//			if (Physics.Raycast(ray, out hit, range)) {
+//				if (hit.transform.tag == "Enemy") {
 					Fire ();
-				}
-			}
+//				}
+//			}
 		}else{
 			if (nearbyEnemies.Length != 0) {
 				FindClosest ();
@@ -101,19 +108,22 @@ public class TurretAI : MonoBehaviour {
 			// loop through each tagged object, remembering nearest one found
 			if (taggedGameObjects[0] != null) {
 				foreach (GameObject obj in taggedGameObjects) {
-					
-					Vector3 objectPos = obj.transform.position;
-					float distanceSqr = (objectPos - transform.position).sqrMagnitude;
-					
-					if (distanceSqr < nearestDistanceSqr) {
-						nearestObj = obj;
-						nearestDistanceSqr = distanceSqr;
+
+					if (obj) {
+						Vector3 objectPos = obj.transform.position;
+						float distanceSqr = (objectPos - transform.position).sqrMagnitude;
+						
+						if (distanceSqr < nearestDistanceSqr) {
+							nearestObj = obj;
+							nearestDistanceSqr = distanceSqr;
+						}
 					}
 				}
 			}
 		}
 		if (nearestObj) {
 			target = nearestObj.transform;
+			targetC = target.GetComponent<CharacterController>();
 		}
 	}
 
@@ -127,10 +137,11 @@ public class TurretAI : MonoBehaviour {
 				while (intAmount > 0) {
 					intAmount--;
 					GameObject newBullet = (GameObject)Instantiate(bulletType,m.position,m.rotation);
+					Instantiate(fireParticle,m.position,m.rotation);
 					BulletScript ns = newBullet.GetComponent<BulletScript>();
-					newBullet.rigidbody.AddForce (m.forward * bulletForce);
-					newBullet.rigidbody.AddForce (m.up * inaccuracy);
-					newBullet.rigidbody.AddForce (m.right * inaccuracy);
+					newBullet.rigidbody.AddForce (m.forward * bulletForce * Random.Range(0.9f,1.1f));
+					newBullet.rigidbody.AddForce (m.up * Random.Range(-inaccuracy,inaccuracy));
+					newBullet.rigidbody.AddForce (m.right * Random.Range(-inaccuracy,inaccuracy));
 					ns.damage = damage;
 					ns.apFactor = apFactor;
 					ns.faction = faction;
@@ -145,6 +156,9 @@ public class TurretAI : MonoBehaviour {
 
 	void OnDrawGizmos () {
 		Gizmos.DrawWireSphere(transform.position,range);
+		if (target) {
+			Gizmos.DrawSphere(targetPos,0.25f);
+		}
 	}
 
 	void SearchRandom () {
@@ -153,5 +167,12 @@ public class TurretAI : MonoBehaviour {
 			Vector3 newPos = new Vector3 (Random.Range (-1f,1f),0,Random.Range (-1f,1f));
 			targetPos = pointer.position + newPos;
 		}
+	}
+
+	Vector3 CalculateFuturePosition (Vector3 pos, Vector3 velT, float bs) {
+		float distance = Vector3.Distance (muzzles[0].position,pos);
+		float time = distance/bs;
+		Vector3 fp = pos + velT * time;
+		return fp;
 	}
 }
