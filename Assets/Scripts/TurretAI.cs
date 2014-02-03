@@ -27,6 +27,8 @@ public class TurretAI : MonoBehaviour {
 	public float bulletForce;
 	public int amount;
 	public bool reloaded = true;
+	public float sequenceTime;
+	int muzzleIndex = 0;
 
 	float bulletVel;
 	
@@ -44,6 +46,12 @@ public class TurretAI : MonoBehaviour {
 			muzzles[index] = child;
 			index++;
 		}
+		float y = 0;
+		foreach (Transform m in muzzles) {
+			y += m.position.y;
+		}
+
+		pointer.position = new Vector3 (turret.transform.position.x,y,turret.transform.position.z);
 	}
 
 	void FixedUpdate () {
@@ -130,24 +138,35 @@ public class TurretAI : MonoBehaviour {
 	void Fire () {
 
 		if (reloaded == true) {
+			muzzleIndex = 0;
 			reloaded = false;
 			Invoke ("Reload",firerate);
-			foreach (Transform m in muzzles) {
-				int intAmount = amount;
-				while (intAmount > 0) {
-					intAmount--;
-					GameObject newBullet = (GameObject)Instantiate(bulletType,m.position,m.rotation);
-					Instantiate(fireParticle,m.position,m.rotation);
-					BulletScript ns = newBullet.GetComponent<BulletScript>();
-					newBullet.rigidbody.AddForce (m.forward * bulletForce * Random.Range(0.9f,1.1f));
-					newBullet.rigidbody.AddForce (m.up * Random.Range(-inaccuracy,inaccuracy));
-					newBullet.rigidbody.AddForce (m.right * Random.Range(-inaccuracy,inaccuracy));
-					ns.damage = damage;
-					ns.apFactor = apFactor;
-					ns.faction = faction;
-				}
+			if (muzzleIndex+1 != muzzles.Length) {
+				Invoke ("FireSequence",sequenceTime);
 			}
+			int intAmount = amount;
+			while (intAmount > 0) {
+				intAmount--;
+				GameObject newBullet = (GameObject)Instantiate(bulletType,muzzles[muzzleIndex].position,muzzles[muzzleIndex].rotation);
+				Instantiate(fireParticle,muzzles[muzzleIndex].position,muzzles[muzzleIndex].rotation);
+				FeedBulletData (newBullet);
+			}
+			muzzleIndex++;
 		}
+	}
+
+	void FireSequence () {
+		if (muzzleIndex+1 != muzzles.Length) {
+			Invoke ("FireSequence",sequenceTime);
+		}
+		int intAmount = amount;
+		while (intAmount > 0) {
+			intAmount--;
+			GameObject newBullet = (GameObject)Instantiate(bulletType,muzzles[muzzleIndex].position,muzzles[muzzleIndex].rotation);
+			Instantiate(fireParticle,muzzles[muzzleIndex].position,muzzles[muzzleIndex].rotation);
+			FeedBulletData (newBullet);
+		}
+		muzzleIndex++;
 	}
 
 	void Reload () {
@@ -174,5 +193,15 @@ public class TurretAI : MonoBehaviour {
 		float time = distance/bs;
 		Vector3 fp = pos + velT * time;
 		return fp;
+	}
+
+	void FeedBulletData (GameObject newBullet) {
+		BulletScript ns = newBullet.GetComponent<BulletScript>();
+		newBullet.rigidbody.AddForce (muzzles[muzzleIndex].forward * bulletForce * Random.Range(0.9f,1.1f));
+		newBullet.rigidbody.AddForce (muzzles[muzzleIndex].up * Random.Range(-inaccuracy,inaccuracy));
+		newBullet.rigidbody.AddForce (muzzles[muzzleIndex].right * Random.Range(-inaccuracy,inaccuracy));
+		ns.damage = damage;
+		ns.apFactor = apFactor;
+		ns.faction = faction;
 	}
 }

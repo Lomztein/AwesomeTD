@@ -7,6 +7,7 @@ public class BulletScript : MonoBehaviour {
 	public float damage;
 	public float apFactor;
 	public float life = 5;
+	public GameObject hitParticle;
 
 	void Start () {
 		Destroy(gameObject,life);
@@ -19,6 +20,9 @@ public class BulletScript : MonoBehaviour {
 			if (oh.faction != faction) {
 				Destroy (gameObject);
 				oh.TakeDamage(damage,apFactor);
+				if (hitParticle) {
+					Instantiate(hitParticle,transform.position,Quaternion.identity);
+				}
 			}
 		}
 	}
