@@ -17,7 +17,7 @@ public class TurretAI : MonoBehaviour {
 	GameObject[] nearbyEnemies;
 	CharacterController targetC;
 	public bool reloaded = true;
-	Transform[] muzzles;
+	public Transform[] muzzles;
 	int muzzleIndex = 0;
 
 	GameObject bulletType;
@@ -60,7 +60,20 @@ public class TurretAI : MonoBehaviour {
 
 		bulletVel = (bulletForce/bulletType.rigidbody.mass)*Time.fixedDeltaTime;
 
-		model = newTurret.transform;
+
+		GameObject nt = null;
+
+		if (turret.transform.childCount == 0) {
+			nt = (GameObject)Instantiate (newTurret,turret.transform.position,Quaternion.Euler (newRot));
+			nt.transform.parent = turret.transform;
+		}
+
+		if (nt) {
+			model = nt.transform;
+		}else{
+			model = newTurret.transform;
+		}
+
 		int index = 0;
 		muzzles = new Transform[model.childCount-1];
 		foreach (Transform child in model) {
@@ -70,7 +83,7 @@ public class TurretAI : MonoBehaviour {
 				index++;
 			}
 		}
-
+		
 		float y = 0;
 		foreach (Transform m in muzzles) {
 			y += m.position.y;
@@ -78,10 +91,6 @@ public class TurretAI : MonoBehaviour {
 		}
 
 		pointer.position = new Vector3 (turret.transform.position.x,y,turret.transform.position.z);
-
-		if (turret.transform.childCount == 0) {
-			Instantiate (newTurret,turret.transform.position,Quaternion.Euler (newRot));
-		}
 		
 	}
 

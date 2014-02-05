@@ -7,5 +7,9 @@ public class StatsManager : MonoBehaviour {
 	public int difficulty;
 	public int wave;
 	public bool debugMode;
+	public int credits;
 
+	void Update () {
+
+		if (
 }
