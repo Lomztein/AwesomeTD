@@ -8,6 +8,8 @@ public class BulletScript : MonoBehaviour {
 	public float apFactor;
 	public float life = 5;
 	public GameObject hitParticle;
+	public GameObject parentUnit;
+	public float range;
 
 	void Start () {
 		Destroy(gameObject,life);

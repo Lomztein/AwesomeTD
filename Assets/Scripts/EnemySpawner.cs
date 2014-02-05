@@ -49,7 +49,7 @@ public class EnemySpawner : MonoBehaviour {
 		int index = -1;
 		foreach (float frequency in spawnFrequency) {
 			index++;
-			if (index * 5 <= stats.wave && frequency > 25) {
+			if (index * 5 <= stats.wave && frequency > 5) {
 				spawnFrequency[index] -= 1 * stats.difficulty;
 			}
 		}

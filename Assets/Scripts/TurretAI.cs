@@ -16,19 +16,19 @@ public class TurretAI : MonoBehaviour {
 	Collider[] nearbyColliders;
 	GameObject[] nearbyEnemies;
 	CharacterController targetC;
-
-	Transform[] muzzles;
-	public GameObject bulletType;
-	public GameObject fireParticle;
-	public float damage;
-	public float apFactor;
-	public float inaccuracy;
-	public float firerate;
-	public float bulletForce;
-	public int amount;
 	public bool reloaded = true;
-	public float sequenceTime;
+	Transform[] muzzles;
 	int muzzleIndex = 0;
+
+	GameObject bulletType;
+	GameObject fireParticle;
+	float damage;
+	float apFactor;
+	float inaccuracy;
+	float firerate;
+	float bulletForce;
+	int amount;
+	float sequenceTime;
 
 	float bulletVel;
 	
@@ -36,47 +36,85 @@ public class TurretAI : MonoBehaviour {
 	void Start () {
 
 		SearchRandom ();
-		bulletVel = (bulletForce/bulletType.rigidbody.mass)*Time.fixedDeltaTime;
 		size = GetComponent<SphereCollider>().radius;
-
-		model = transform.FindChild ("Turret").FindChild ("Model");
-		int index = 0;
-		muzzles = new Transform[model.childCount];
-		foreach (Transform child in model) {
-			muzzles[index] = child;
-			index++;
+		if (turret.transform.childCount > 0) {
+			GetTurretData (turret.transform.GetChild (0).gameObject);
 		}
+
+	}
+
+	public void GetTurretData (GameObject newTurret) {
+
+		TurretData newData = newTurret.GetComponent<TurretData>();
+		bulletType = newData.bulletType;
+		fireParticle = newData.fireParticle;
+		damage = newData.damage;
+		apFactor = newData.apFactor;
+		inaccuracy = newData.inaccuracy;
+		firerate = newData.firerate;
+		bulletForce = newData.bulletForce;
+		amount = newData.amount;
+		sequenceTime = newData.sequenceTime;
+		range *= newData.rangeMultiplier;
+		Vector3 newRot = newData.turretAngleOffset;
+
+		bulletVel = (bulletForce/bulletType.rigidbody.mass)*Time.fixedDeltaTime;
+
+		model = newTurret.transform;
+		int index = 0;
+		muzzles = new Transform[model.childCount-1];
+		foreach (Transform child in model) {
+			if (child.name == "Muzzle") {
+				Debug.Log (child.name);
+				muzzles[index] = child;
+				index++;
+			}
+		}
+
 		float y = 0;
 		foreach (Transform m in muzzles) {
 			y += m.position.y;
+			y /= model.childCount-1;
 		}
 
 		pointer.position = new Vector3 (turret.transform.position.x,y,turret.transform.position.z);
+
+		if (turret.transform.childCount == 0) {
+			Instantiate (newTurret,turret.transform.position,Quaternion.Euler (newRot));
+		}
+		
 	}
 
-	void FixedUpdate () {
-		nearbyColliders = Physics.OverlapSphere(transform.position,range);
 
-		if (target) {
-			if (Vector3.Distance (transform.position,target.position) > range) {
-				target = null;
-			}
-		}
-		int nEnemies = 0;
-		
-		foreach (Collider c in nearbyColliders) {
-			if (c.gameObject.tag == "Enemy") {
-				nEnemies++;
-			}
-		}
-		
-		nearbyEnemies = new GameObject[nEnemies];
-		
-		int index = 0;
-		foreach (Collider c in nearbyColliders) {
-			if (c.gameObject.tag == "Enemy") {
-				nearbyEnemies[index] = c.gameObject;
-				index++;
+	void FixedUpdate () {
+
+			if (model) {
+
+				nearbyColliders = Physics.OverlapSphere(transform.position,range);
+
+				if (target) {
+					if (Vector3.Distance (transform.position,target.position) > range) {
+						target = null;
+					}
+				}
+
+				int nEnemies = 0;
+				
+				foreach (Collider c in nearbyColliders) {
+					if (c.gameObject.tag == "Enemy") {
+						nEnemies++;
+					}
+				}
+				
+				nearbyEnemies = new GameObject[nEnemies];
+				
+				int index = 0;
+				foreach (Collider c in nearbyColliders) {
+					if (c.gameObject.tag == "Enemy") {
+						nearbyEnemies[index] = c.gameObject;
+						index++;
+
+				}
 			}
 		}
 	}
@@ -84,23 +122,21 @@ public class TurretAI : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if (target) {
-			targetPos = CalculateFuturePosition(target.position,targetC.velocity,bulletVel);
-//			Ray ray = new Ray (pointer.position,pointer.forward);
-//			RaycastHit hit;
-//			if (Physics.Raycast(ray, out hit, range)) {
-//				if (hit.transform.tag == "Enemy") {
-					Fire ();
-//				}
-//			}
-		}else{
-			if (nearbyEnemies.Length != 0) {
-				FindClosest ();
-			}
-		}
+		if (model) {
 
-		pointer.LookAt(targetPos);
-		turret.transform.rotation = Quaternion.Lerp (turret.transform.rotation,pointer.rotation,turnSpeed * Time.deltaTime);
+			if (target) {
+				targetPos = CalculateFuturePosition(target.position,targetC.velocity,bulletVel);
+				Fire ();
+			}else{
+				if (nearbyEnemies.Length != 0) {
+					FindClosest ();
+				}
+			}
+
+			pointer.LookAt(targetPos);
+			turret.transform.rotation = Quaternion.Lerp (turret.transform.rotation,pointer.rotation,turnSpeed * Time.deltaTime);
+
+		}
 	}
 
 	void FindClosest () {
@@ -203,5 +239,7 @@ public class TurretAI : MonoBehaviour {
 		ns.damage = damage;
 		ns.apFactor = apFactor;
 		ns.faction = faction;
+		ns.range = range;
+		ns.parentUnit = gameObject;
 	}
 }
