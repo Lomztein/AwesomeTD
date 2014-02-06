@@ -14,6 +14,10 @@ public class HealthScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+		if (health == 0) {
+			health = maxHealth;
+		}
 	
 	}
 	

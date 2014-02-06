@@ -3,6 +3,9 @@ using System.Collections;
 
 public class TurretAI : MonoBehaviour {
 
+	public string standName;
+	public string standDiscription;
+
 	public string faction;
 	public GameObject turret;
 	public Transform pointer;
@@ -18,6 +21,7 @@ public class TurretAI : MonoBehaviour {
 	CharacterController targetC;
 	public bool reloaded = true;
 	public Transform[] muzzles;
+	public int cost;
 	int muzzleIndex = 0;
 
 	GameObject bulletType;
@@ -78,7 +82,7 @@ public class TurretAI : MonoBehaviour {
 		muzzles = new Transform[model.childCount-1];
 		foreach (Transform child in model) {
 			if (child.name == "Muzzle") {
-				Debug.Log (child.name);
+//				Debug.Log (child.name);
 				muzzles[index] = child;
 				index++;
 			}

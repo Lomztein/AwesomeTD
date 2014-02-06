@@ -5,6 +5,7 @@ public class EnemySpawner : MonoBehaviour {
 	
 	public GameObject[] enemyTypes;
 	public GameObject[] bossTypes;
+	public int wavesBetweenEnemies;
 	private StatsManager stats;
 	public float[] spawnFrequency;
 	public float mapWidth;
@@ -27,7 +28,7 @@ public class EnemySpawner : MonoBehaviour {
 			int enemyNumber = -1;
 			foreach (GameObject newEnemy in enemyTypes) {
 				enemyNumber++;
-				if (enemyNumber * 5 <= stats.wave) {
+				if (enemyNumber * wavesBetweenEnemies <= stats.wave) {
 					if (Mathf.Round (Random.Range (0,spawnFrequency[enemyNumber])) == 1) {
 						Instantiate(newEnemy,new Vector3(Random.onUnitSphere.x * mapWidth, transform.position.y,transform.position.z),Quaternion.identity);
 					}
@@ -43,13 +44,13 @@ public class EnemySpawner : MonoBehaviour {
 	
 	void NextWave () {
 		stats.waveStarted = true;
-		Invoke ("EndWave",60);
+		Invoke ("EndWave",20);
 		stats.wave++;
 		//Debug.Log ("New wave: "+stats.wave.ToString());
 		int index = -1;
 		foreach (float frequency in spawnFrequency) {
 			index++;
-			if (index * 5 <= stats.wave && frequency > 5) {
+			if (index * wavesBetweenEnemies <= stats.wave && frequency > 5) {
 				spawnFrequency[index] -= 1 * stats.difficulty;
 			}
 		}
@@ -62,7 +63,7 @@ public class EnemySpawner : MonoBehaviour {
 				
 				bool canSpawn;
 				
-				if (index * 5 <= stats.wave) {
+				if (index * wavesBetweenEnemies <= stats.wave) {
 					canSpawn = true;
 				}else{
 					canSpawn = false;

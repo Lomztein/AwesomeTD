@@ -3,6 +3,11 @@ using System.Collections;
 
 public class TurretData : MonoBehaviour {
 
+	public int classType;
+	public string turretName;
+	public string turretDescription;
+	public int cost;
+
 	public GameObject bulletType;
 	public GameObject fireParticle;
 	public float damage;

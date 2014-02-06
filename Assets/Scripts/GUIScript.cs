@@ -3,35 +3,65 @@ using System.Collections;
 
 public class GUIScript : MonoBehaviour {
 
+	StatsManager stats;
 	MouseScript ms;
-	MeshRenderer mr;
-	MeshFilter mf;
+//	MeshRenderer mr;
+//	MeshFilter mf;
+	TurretAI[] ais;
+	TurretData[] tds;
 
 	void Start () {
-
 	
-		mr = GetComponent<MeshRenderer>();
+//		mr = GetComponent<MeshRenderer>();
 		ms = GetComponent<MouseScript>();
-		mf = GetComponent<MeshFilter>();
+//		mf = GetComponent<MeshFilter>();
+		stats = GameObject.FindGameObjectWithTag("Stats").GetComponent<StatsManager>();
+
+		ais = new TurretAI[ms.stands.Length];
+		for (int i=0;i<ms.stands.Length;i++) {
+			ais[i] = ms.stands[i].GetComponent<TurretAI>();
+		}
+
+		tds = new TurretData[ms.turrets.Length];
+		for (int i=0;i<ms.turrets.Length;i++) {
+			tds[i] = ms.turrets[i].GetComponent<TurretData>();
+		}
+		                                  
 
 	}
 	void OnGUI () {
 
-		if (GUI.Button(new Rect(10,Screen.height-30,20,20),"1")) {
-			ms.selectedIndex = 0;
-		}
-		if (GUI.Button(new Rect(40,Screen.height-30,20,20),"2")) {
-			ms.selectedIndex = 1;
-		}
-		if (GUI.Button(new Rect(70,Screen.height-30,20,20),"3")) {
-			ms.selectedIndex = 2;
-		}
-		if (GUI.Button(new Rect(100,Screen.height-30,20,20),"4")) {
-			ms.selectedIndex = 3;
-		}
-		if (GUI.Button(new Rect(130,Screen.height-30,20,20),"5")) {
-			ms.selectedIndex = 4;
+		GUI.Label (new Rect(10,10,Screen.width,20),"Credits: " + stats.credits.ToString ());
+
+		GUI.Label (new Rect(10,30,Screen.width,20),"Wave: " + stats.wave.ToString ());
+		GUI.Label (new Rect(10,50,Screen.width,20),"Difficulty: " + stats.difficulty.ToString ());
+
+		if (ms.totalIndex[ms.selectedIndex]) {
+			
+			GUI.Label (new Rect(10,80,Screen.width,20),"Unit: " + ms.totalIndex[ms.selectedIndex].name);
+			
+			if (ms.selectedIndex <= ms.stands.Length) {
+				GUI.Label (new Rect(10,100,Screen.width,20),"Cost: " + ais[ms.selectedIndex-1].cost);
+			}else{
+				GUI.Label (new Rect(10,120,Screen.width,20),"Cost: " + tds[ms.selectedIndex-ms.stands.Length-1].cost);
+			}
 		}
 
+		for (int i=0;i<ms.totalIndex.Length-1;i++) {
+
+			if (i+1 <= ms.stands.Length) {
+				if (ais[i].cost <= stats.credits) {
+					if (GUI.Button(new Rect(10+i * 60,Screen.height - 120,50,50),(i+1).ToString())) {
+						ms.selectedIndex = i+1;
+					}
+				}
+			}else{
+				if (tds[i-ms.stands.Length].cost <= stats.credits) {
+					if (GUI.Button(new Rect((10+i*60)-(ms.stands.Length*60),Screen.height - 60,50,50),ms.totalIndex[i+1].name)) {
+						ms.selectedIndex = i+1;
+					}
+				}
+			}
+		}
 	}
 }

@@ -11,15 +11,18 @@ public class MouseScript : MonoBehaviour {
 	public bool showMenu = false;
 	public int menuID;
 	public bool canPlace = true;
+	StatsManager stats;
 
 	void Start () {
 
-		totalIndex = new GameObject[stands.Length + turrets.Length];
-		for (int i = 0;i<totalIndex.Length;i++) {
-			if (i < turrets.Length) {
-				totalIndex[i] = stands[i];
+		stats = GameObject.FindGameObjectWithTag("Stats").GetComponent<StatsManager>();
+		totalIndex = new GameObject[stands.Length + turrets.Length + 1];
+		for (int i = 0;i<totalIndex.Length-1;i++) {
+			if (i < stands.Length) {
+				totalIndex[i + 1] = stands[i];
 			}else{
-				totalIndex[i] = turrets[i-stands.Length];
+//				Debug.Log (i-stands.Length);
+				totalIndex[i + 1] = turrets[i-stands.Length];
 			}
 		}
 	}
@@ -28,11 +31,17 @@ public class MouseScript : MonoBehaviour {
 		
 		if (Input.GetButtonDown("Fire2")) {
 			TestPosition ();
+			focusTurret = null;
 		}
 
-		float size = totalIndex[selectedIndex].GetComponent<TurretAI>().size * 2;
+		float size = 1;
+		if (totalIndex[selectedIndex] && selectedIndex <= stands.Length) {
+			size = totalIndex[selectedIndex].GetComponent<TurretAI>().size * 2;
+		}
 		Vector3 newSize = new Vector3 (size,0.5f,size);
 		transform.localScale = newSize;
+
+//		Debug.Log (selectedIndex);
 
 	}
 
@@ -40,9 +49,16 @@ public class MouseScript : MonoBehaviour {
 
 		TestArea (0.5f);
 		if (focusTurret) {
-			if (focusTurret.GetComponent<TurretAI>().turret.transform.childCount == 0) {
-				focusTurret.SendMessage("GetTurretData",GetTurret());
-				focusTurret = null;
+			if (selectedIndex > stands.Length) {
+				GameObject t = GetTurret ();
+				TurretAI ai = focusTurret.GetComponent<TurretAI>();
+				TurretData td = t.GetComponent<TurretData>();
+				Debug.Log (ai.classType + ", " + td.classType);
+				if (ai.turret.transform.childCount == 0 && td.classType <= ai.classType && td.cost <= stats.credits) {
+					focusTurret.SendMessage("GetTurretData",t);
+					stats.credits -= td.cost;
+					focusTurret = null;
+				}
 			}
 		}else{
 			PlaceStand ();
@@ -50,18 +66,22 @@ public class MouseScript : MonoBehaviour {
 	}
 
 	GameObject GetTurret () {
-		GameObject newTurret = turrets[Random.Range(0,turrets.Length)];
+		GameObject newTurret = totalIndex[selectedIndex];
 		return newTurret;
 	}
 	
 	void PlaceStand () {
 
-		GameObject newStand = stands[selectedIndex];
-		float newSize = newStand.GetComponent<TurretAI>().size;
+		if (selectedIndex <= stands.Length) {
+			GameObject newStand = stands[selectedIndex-1];
+			TurretAI ai = newStand.GetComponent<TurretAI>();
+			float newSize = ai.size;
 
-		Debug.Log (newSize);
-		if (TestArea(newSize)) {
-			Instantiate(newStand,transform.position,Quaternion.identity);
+			//Debug.Log (newSize);
+			if (TestArea(newSize) && ai.cost <= stats.credits) {
+				Instantiate(newStand,transform.position,Quaternion.identity);
+				stats.credits -= ai.cost;
+			}
 		}
 	}
 

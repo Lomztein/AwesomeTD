@@ -11,5 +11,11 @@ public class StatsManager : MonoBehaviour {
 
 	void Update () {
 
-		if (
+		if (Input.GetButton ("Exit")) {
+			Application.Quit();
+		}
+		if (Input.GetButton ("Reload")) {
+			Application.LoadLevel (Application.loadedLevelName);
+		}
+	}
 }
