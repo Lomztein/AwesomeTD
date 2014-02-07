@@ -43,7 +43,7 @@ public class GUIScript : MonoBehaviour {
 			if (ms.selectedIndex <= ms.stands.Length) {
 				GUI.Label (new Rect(10,100,Screen.width,20),"Cost: " + ais[ms.selectedIndex-1].cost);
 			}else{
-				GUI.Label (new Rect(10,120,Screen.width,20),"Cost: " + tds[ms.selectedIndex-ms.stands.Length-1].cost);
+				GUI.Label (new Rect(10,100,Screen.width,20),"Cost: " + tds[ms.selectedIndex-ms.stands.Length-1].cost);
 			}
 		}
 

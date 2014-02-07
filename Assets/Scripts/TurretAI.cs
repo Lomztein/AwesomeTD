@@ -91,7 +91,7 @@ public class TurretAI : MonoBehaviour {
 		float y = 0;
 		foreach (Transform m in muzzles) {
 			y += m.position.y;
-			y /= model.childCount-1;
+			y /= (model.childCount-1);
 		}
 
 		pointer.position = new Vector3 (turret.transform.position.x,y,turret.transform.position.z);

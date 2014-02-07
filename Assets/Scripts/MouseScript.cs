@@ -6,6 +6,7 @@ public class MouseScript : MonoBehaviour {
 	public GameObject[] stands;
 	public GameObject[] turrets;
 	public GameObject[] totalIndex;
+	public int[] costs;
 	public GameObject focusTurret;
 	public int selectedIndex;
 	public bool showMenu = false;
@@ -21,8 +22,16 @@ public class MouseScript : MonoBehaviour {
 			if (i < stands.Length) {
 				totalIndex[i + 1] = stands[i];
 			}else{
-//				Debug.Log (i-stands.Length);
 				totalIndex[i + 1] = turrets[i-stands.Length];
+			}
+		}
+
+		costs = new int[totalIndex.Length-1];
+		for (int i = 0;i<totalIndex.Length-1;i++) {
+			if (i <= stands.Length) {
+				costs[i] = totalIndex[i+1].GetComponent<TurretAI>().cost;
+			}else{
+				costs[i] = totalIndex[i+1].GetComponent<TurretData>().cost;
 			}
 		}
 	}

@@ -26,7 +26,7 @@ public class EnemyStatsController : MonoBehaviour {
 		health.regenSpeed += Mathf.Max (stats.wave * regenWaveFactor * (stats.difficulty / 0.2f),maxRegenSpeed);
 		health.maxRegen = health.maxHealth/health.maxRegen * 100;
 
-		value = ((int)health.maxHealth + (int)health.maxArmor) * Mathf.Max ((int)health.regenSpeed,1);
+		value = (((int)health.maxHealth + (int)health.maxArmor) * Mathf.Max ((int)health.regenSpeed,1))/5;
 
 		RandomizeSize ();
 	
