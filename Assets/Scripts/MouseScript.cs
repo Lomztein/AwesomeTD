@@ -65,8 +65,12 @@ public class MouseScript : MonoBehaviour {
 			focusTurret = null;
 		}
 
-		size = ais[selectedStand].size * 2;
-		Vector3 newSize = new Vector3 (size,0.5f,size);
+//		if (focusTurret) {
+//			size = focusAI.size;
+//		}else{
+			size = ais[selectedStand].size;
+//		}
+		Vector3 newSize = new Vector3 (size * 2,0.5f,size * 2);
 		transform.localScale = newSize;
 
 		if (!focusTurret) {
@@ -77,7 +81,7 @@ public class MouseScript : MonoBehaviour {
 
 	void FixedUpdate () {
 
-		Collider[] newCols = Physics.OverlapSphere(terrain.hitPoint,size/2);
+		Collider[] newCols = Physics.OverlapSphere(terrain.hitPoint,size);
 		canPlace = true;
 
 		if (showTurretOptions == false) {
@@ -101,15 +105,17 @@ public class MouseScript : MonoBehaviour {
 
 		if (focusTurret) {
 			if (focusAI.turret.transform.childCount == 0) {
-				stats.credits -= tds[selectedTurret].cost;
-				focusTurret.SendMessage ("GetTurretData",GetTurret ());
+				if (tds[selectedTurret].classType <= focusAI.classType && stats.credits >= tds[selectedTurret].cost) {
+					stats.credits -= tds[selectedTurret].cost;
+					focusTurret.SendMessage ("GetTurretData",GetTurret ());
+				}
 			}else{
 				showTurretOptions = true;
 			}
-		}else{
+		}else if (stats.credits >= tds[selectedTurret].cost) {
 			stats.credits -= ais[selectedStand].cost;
 			Instantiate(GetStand (),transform.position,Quaternion.identity);
-		}
+		}	
 	}
 	
 	GameObject GetTurret () {

@@ -23,7 +23,7 @@ public class EnemySpawner : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-		
+
 		if (stats.waveStarted == true) {
 			int enemyNumber = -1;
 			foreach (GameObject newEnemy in enemyTypes) {

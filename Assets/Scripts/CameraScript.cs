@@ -58,24 +58,25 @@ public class CameraScript : MonoBehaviour {
 				transform.position += new Vector3(0f,0f,cameraSens * Time.deltaTime);
 			}
 		}else{
-			if (Input.GetButton ("Exit")) {
-				ChangeView(transform);
+			if (Input.GetButtonDown ("Exit")) {
+				ResetView();
 			}
 		}
 	}
 
 	public void ChangeView (Transform newView) {
-		if (onTurret == false) {
-			turretView = newView;
-			onTurret = true;
-			transform.position = newView.position;
-			transform.rotation = newView.rotation;
-			transform.parent = newView;
-		}else{
-			onTurret = false;
-			transform.position = camPos;
-			transform.rotation = camRot;
-			transform.parent = null;
-		}
+		turretView = newView;
+		onTurret = true;
+		transform.position = newView.position;
+		transform.rotation = newView.rotation;
+		transform.parent = newView;
+	}
+
+	public void ResetView () {
+		onTurret = false;
+		turretView = null;
+		transform.position = camPos;
+		transform.rotation = camRot;
+		transform.parent = null;
 	}
 }

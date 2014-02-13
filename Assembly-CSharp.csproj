@@ -51,6 +51,7 @@
      <Compile Include="Assets\Scripts\EnemyInfantryAI.cs" />
      <Compile Include="Assets\Scripts\EnemySpawner.cs" />
      <Compile Include="Assets\Scripts\EnemyStatsController.cs" />
+     <Compile Include="Assets\Scripts\FragBulletScript.cs" />
      <Compile Include="Assets\Scripts\GUIScript.cs" />
      <Compile Include="Assets\Scripts\HealthScript.cs" />
      <Compile Include="Assets\Scripts\MouseScript.cs" />

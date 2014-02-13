@@ -17,10 +17,12 @@ public class EnemyInfantryAI : MonoBehaviour {
 	float forwardSpeed;
 	Vector3 speed;
 	HealthScript targetHealth;
+	public Transform model;
 
 	// Use this for initialization
 	void Start () {
 
+		model = transform.FindChild ("Model");
 		cc = GetComponent<CharacterController>();
 		pointer = transform.FindChild("Pointer");
 		newLerp = transform.rotation;
@@ -59,7 +61,7 @@ public class EnemyInfantryAI : MonoBehaviour {
 			pointer.LookAt (target.position);
 			cc.Move(speed * Time.deltaTime);
 			if (Vector3.Distance(transform.position,target.position) < range) {
-				targetHealth.TakeDamage (damage,apFactor);
+				targetHealth.TakeDamage (damage * Time.deltaTime,apFactor * Time.deltaTime);
 			}
 		}
 	}

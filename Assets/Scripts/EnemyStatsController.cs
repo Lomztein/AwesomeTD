@@ -31,6 +31,7 @@ public class EnemyStatsController : MonoBehaviour {
 		RandomizeSize ();
 	
 	}
+
 	
 	void RandomizeSize () {
 
@@ -51,10 +52,12 @@ public class EnemyStatsController : MonoBehaviour {
 
 	void OnGUI () {
 
-		Vector2 camPos = Camera.main.WorldToScreenPoint(transform.position);
-		Vector2 screenPos = new Vector2 (camPos.x,-(camPos.y) + Screen.height);
-		GUI.Label (new Rect (screenPos.x-50,screenPos.y-45,100,20),"Armor: " + health.armor.ToString ());
-		GUI.Label (new Rect (screenPos.x-50,screenPos.y-30,100,20),"Health: " + health.health.ToString ());
+		if (ai.model.renderer.isVisible && stats.cam.onTurret == false) {
+			Vector2 camPos = Camera.main.WorldToScreenPoint(transform.position);
+			Vector2 screenPos = new Vector2 (camPos.x,-(camPos.y) + Screen.height);
+			GUI.Label (new Rect (screenPos.x-50,screenPos.y-45,100,20),"Armor: " + health.armor.ToString ());
+			GUI.Label (new Rect (screenPos.x-50,screenPos.y-30,100,20),"Health: " + health.health.ToString ());
+		}
 
 	}
 }
