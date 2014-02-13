@@ -8,6 +8,8 @@ public class StatsManager : MonoBehaviour {
 	public int wave;
 	public bool debugMode;
 	public int credits;
+	public float timeScale = 1;
+	public float fieldOfView = 90;
 
 	void Update () {
 
@@ -17,5 +19,8 @@ public class StatsManager : MonoBehaviour {
 		if (Input.GetButton ("Reload")) {
 			Application.LoadLevel (Application.loadedLevelName);
 		}
+
+		Time.timeScale = timeScale;
+		Camera.main.fieldOfView = fieldOfView;
 	}
 }

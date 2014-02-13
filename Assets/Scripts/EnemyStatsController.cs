@@ -26,7 +26,7 @@ public class EnemyStatsController : MonoBehaviour {
 		health.regenSpeed += Mathf.Max (stats.wave * regenWaveFactor * (stats.difficulty / 0.2f),maxRegenSpeed);
 		health.maxRegen = health.maxHealth/health.maxRegen * 100;
 
-		value = (((int)health.maxHealth + (int)health.maxArmor) * Mathf.Max ((int)health.regenSpeed,1))/5;
+		value = stats.wave * 10 + (int)health.maxHealth/(stats.difficulty*10);
 
 		RandomizeSize ();
 	
@@ -35,7 +35,7 @@ public class EnemyStatsController : MonoBehaviour {
 	void RandomizeSize () {
 
 		float newScale = Random.Range (1f-(float)stats.wave/100f,1f+(float)stats.wave/100f);
-		Mathf.Clamp (newScale,0.3f,3f);
+		newScale = Mathf.Clamp (newScale,0.5f,3f);
 		transform.localScale *= newScale;
 		health.maxHealth *= newScale;
 		health.health *= newScale;
@@ -46,6 +46,15 @@ public class EnemyStatsController : MonoBehaviour {
 	void OnDestroy () {
 
 		stats.credits += value;
+
+	}
+
+	void OnGUI () {
+
+		Vector2 camPos = Camera.main.WorldToScreenPoint(transform.position);
+		Vector2 screenPos = new Vector2 (camPos.x,-(camPos.y) + Screen.height);
+		GUI.Label (new Rect (screenPos.x-50,screenPos.y-45,100,20),"Armor: " + health.armor.ToString ());
+		GUI.Label (new Rect (screenPos.x-50,screenPos.y-30,100,20),"Health: " + health.health.ToString ());
 
 	}
 }

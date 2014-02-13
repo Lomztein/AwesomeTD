@@ -16,7 +16,7 @@ public class BulletScript : MonoBehaviour {
 	}
 
 	void OnTriggerEnter (Collider other) {
-
+		
 		HealthScript oh = other.gameObject.GetComponent<HealthScript>();
 		if (oh) {
 			if (oh.faction != faction) {
@@ -25,6 +25,13 @@ public class BulletScript : MonoBehaviour {
 				if (hitParticle) {
 					Instantiate(hitParticle,transform.position,Quaternion.identity);
 				}
+			}
+		}
+
+		if (other.tag == "Terrain") {
+			Destroy (gameObject);
+			if (hitParticle) {
+				Instantiate(hitParticle,transform.position,Quaternion.identity);
 			}
 		}
 	}

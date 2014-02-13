@@ -23,7 +23,14 @@ public class TurretAI : MonoBehaviour {
 	public Transform[] muzzles;
 	public int cost;
 	int muzzleIndex = 0;
+	public float upgradeFactor;
+	public float firerateUpgradeFactor;
+	public int upgradeCount;
+	public int upgradeCost;
+	public bool upgrade;
+	public Transform cameraView;
 
+	int turretCost;
 	GameObject bulletType;
 	GameObject fireParticle;
 	float damage;
@@ -39,17 +46,18 @@ public class TurretAI : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		SearchRandom ();
+		firerateUpgradeFactor = firerate * (upgradeFactor-1);
 		size = GetComponent<SphereCollider>().radius;
 		if (turret.transform.childCount > 0) {
 			GetTurretData (turret.transform.GetChild (0).gameObject);
 		}
-
+		SearchRandom ();
 	}
 
 	public void GetTurretData (GameObject newTurret) {
 
 		TurretData newData = newTurret.GetComponent<TurretData>();
+		turretCost = newData.cost;
 		bulletType = newData.bulletType;
 		fireParticle = newData.fireParticle;
 		damage = newData.damage;
@@ -63,7 +71,7 @@ public class TurretAI : MonoBehaviour {
 		Vector3 newRot = newData.turretAngleOffset;
 
 		bulletVel = (bulletForce/bulletType.rigidbody.mass)*Time.fixedDeltaTime;
-
+		upgradeCost = cost + turretCost;
 
 		GameObject nt = null;
 
@@ -91,10 +99,14 @@ public class TurretAI : MonoBehaviour {
 		float y = 0;
 		foreach (Transform m in muzzles) {
 			y += m.position.y;
-			y /= (model.childCount-1);
 		}
 
+		y /= muzzles.Length;
 		pointer.position = new Vector3 (turret.transform.position.x,y,turret.transform.position.z);
+
+		cameraView = model.FindChild ("CameraPosition");
+
+		FixedUpdate ();
 		
 	}
 
@@ -150,6 +162,11 @@ public class TurretAI : MonoBehaviour {
 			turret.transform.rotation = Quaternion.Lerp (turret.transform.rotation,pointer.rotation,turnSpeed * Time.deltaTime);
 
 		}
+
+		if (upgrade) {
+			Upgrade ();
+			upgrade = false;
+		}
 	}
 
 	void FindClosest () {
@@ -182,6 +199,15 @@ public class TurretAI : MonoBehaviour {
 			target = nearestObj.transform;
 			targetC = target.GetComponent<CharacterController>();
 		}
+	}
+
+	public void Upgrade () {
+
+		damage *= upgradeFactor;
+		range *= 1 + ((upgradeFactor-1)/5);
+		upgradeCount++;
+		upgradeCost *= 2;
+
 	}
 
 	void Fire () {

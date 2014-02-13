@@ -7,15 +7,24 @@ public class MouseScript : MonoBehaviour {
 	public GameObject[] turrets;
 	public GameObject[] totalIndex;
 	public int[] costs;
+	public int selectedStand;
+	public int selectedTurret;
 	public GameObject focusTurret;
 	public int selectedIndex;
 	public bool showMenu = false;
 	public int menuID;
 	public bool canPlace = true;
+	public bool showTurretOptions;
+	public TurretAI[] ais;
+	public TurretData[] tds;
+	float size = 1;
+	TerrainScript terrain;
+	TurretAI focusAI;
 	StatsManager stats;
 
 	void Start () {
 
+		terrain = GameObject.FindGameObjectWithTag("Terrain").GetComponent<TerrainScript>();
 		stats = GameObject.FindGameObjectWithTag("Stats").GetComponent<StatsManager>();
 		totalIndex = new GameObject[stands.Length + turrets.Length + 1];
 		for (int i = 0;i<totalIndex.Length-1;i++) {
@@ -26,12 +35,22 @@ public class MouseScript : MonoBehaviour {
 			}
 		}
 
+		ais = new TurretAI[stands.Length];
+		for (int i=0;i<stands.Length;i++) {
+			ais[i] = stands[i].GetComponent<TurretAI>();
+		}
+		
+		tds = new TurretData[turrets.Length];
+		for (int i=0;i<turrets.Length;i++) {
+			tds[i] = turrets[i].GetComponent<TurretData>();
+		}
+
 		costs = new int[totalIndex.Length-1];
 		for (int i = 0;i<totalIndex.Length-1;i++) {
-			if (i <= stands.Length) {
-				costs[i] = totalIndex[i+1].GetComponent<TurretAI>().cost;
+			if (i <= stands.Length-1) {
+				costs[i] = ais[i].cost;
 			}else{
-				costs[i] = totalIndex[i+1].GetComponent<TurretData>().cost;
+				costs[i] = tds[i-ais.Length].cost;
 			}
 		}
 	}
@@ -40,72 +59,68 @@ public class MouseScript : MonoBehaviour {
 		
 		if (Input.GetButtonDown("Fire2")) {
 			TestPosition ();
+		}
+
+		if (Input.GetButtonDown ("Fire1")) {
 			focusTurret = null;
 		}
 
-		float size = 1;
-		if (totalIndex[selectedIndex] && selectedIndex <= stands.Length) {
-			size = totalIndex[selectedIndex].GetComponent<TurretAI>().size * 2;
-		}
+		size = ais[selectedStand].size * 2;
 		Vector3 newSize = new Vector3 (size,0.5f,size);
 		transform.localScale = newSize;
 
-//		Debug.Log (selectedIndex);
+		if (!focusTurret) {
+			showTurretOptions = false;
+		}
 
+	}
+
+	void FixedUpdate () {
+
+		Collider[] newCols = Physics.OverlapSphere(terrain.hitPoint,size/2);
+		canPlace = true;
+
+		if (showTurretOptions == false) {
+			focusTurret = null;
+		}
+			                               
+		for (int i = 0;i<newCols.Length;i++) {
+			if (newCols[i].gameObject.tag == "Freindly") {
+				if (!focusTurret) {
+					focusTurret = newCols[i].gameObject;
+					focusAI = focusTurret.GetComponent<TurretAI>();
+				}
+				canPlace = false;
+			}else if (newCols[i].gameObject.tag == "Enemy") {
+				canPlace = false;
+			}
+		}
 	}
 
 	void TestPosition () {
 
-		TestArea (0.5f);
 		if (focusTurret) {
-			if (selectedIndex > stands.Length) {
-				GameObject t = GetTurret ();
-				TurretAI ai = focusTurret.GetComponent<TurretAI>();
-				TurretData td = t.GetComponent<TurretData>();
-				Debug.Log (ai.classType + ", " + td.classType);
-				if (ai.turret.transform.childCount == 0 && td.classType <= ai.classType && td.cost <= stats.credits) {
-					focusTurret.SendMessage("GetTurretData",t);
-					stats.credits -= td.cost;
-					focusTurret = null;
-				}
+			if (focusAI.turret.transform.childCount == 0) {
+				stats.credits -= tds[selectedTurret].cost;
+				focusTurret.SendMessage ("GetTurretData",GetTurret ());
+			}else{
+				showTurretOptions = true;
 			}
 		}else{
-			PlaceStand ();
+			stats.credits -= ais[selectedStand].cost;
+			Instantiate(GetStand (),transform.position,Quaternion.identity);
 		}
-	}
-
-	GameObject GetTurret () {
-		GameObject newTurret = totalIndex[selectedIndex];
-		return newTurret;
 	}
 	
-	void PlaceStand () {
-
-		if (selectedIndex <= stands.Length) {
-			GameObject newStand = stands[selectedIndex-1];
-			TurretAI ai = newStand.GetComponent<TurretAI>();
-			float newSize = ai.size;
-
-			//Debug.Log (newSize);
-			if (TestArea(newSize) && ai.cost <= stats.credits) {
-				Instantiate(newStand,transform.position,Quaternion.identity);
-				stats.credits -= ai.cost;
-			}
-		}
+	GameObject GetTurret () {
+		return turrets[selectedTurret];
 	}
 
-	bool TestArea (float size) {
-		bool isFree = true;
-		Collider[] cols = Physics.OverlapSphere(transform.position,size);
-		foreach (Collider c in cols) {
-			if (c.gameObject.tag == "Freindly") {
-				focusTurret = c.gameObject;
-				isFree = false;
-			}
-			if (c.gameObject.tag == "Enemy") {
-				isFree = false;
-			}
-		}
-		return isFree;
+	GameObject GetStand () {
+		return stands[selectedStand];
 	}
+
+/*	void OnDrawGizmos () {
+		Gizmos.DrawWireSphere(terrain.hitPoint,size/2);
+	}*/
 }
