@@ -12,6 +12,8 @@ public class BulletScript : MonoBehaviour {
 	public float range;
 	public Transform target;
 	public HealthScript oh;
+	public bool destroyOnHit = true;
+	public bool doNativeDamage = true;
 
 	void Start () {
 		Destroy(gameObject,life);
@@ -22,8 +24,8 @@ public class BulletScript : MonoBehaviour {
 		oh = other.gameObject.GetComponent<HealthScript>();
 		if (oh) {
 			if (oh.faction != faction) {
-				Destroy (gameObject);
-				oh.TakeDamage(damage,apFactor);
+				if (destroyOnHit) { Destroy (gameObject); }
+				if (doNativeDamage) { oh.TakeDamage(damage,apFactor); }
 				if (hitParticle) {
 					Instantiate(hitParticle,transform.position,Quaternion.identity);
 				}
@@ -31,7 +33,7 @@ public class BulletScript : MonoBehaviour {
 		}
 
 		if (other.tag == "Terrain") {
-			Destroy (gameObject);
+			if (destroyOnHit) { Destroy (gameObject); }
 			if (hitParticle) {
 				Instantiate(hitParticle,transform.position,Quaternion.identity);
 			}
