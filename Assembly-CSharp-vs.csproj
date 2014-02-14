@@ -54,10 +54,12 @@
      <Compile Include="Assets\Scripts\FragBulletScript.cs" />
      <Compile Include="Assets\Scripts\GUIScript.cs" />
      <Compile Include="Assets\Scripts\HealthScript.cs" />
+     <Compile Include="Assets\Scripts\LaserBulletScript.cs" />
      <Compile Include="Assets\Scripts\MouseScript.cs" />
      <Compile Include="Assets\Scripts\ParticleScript.cs" />
      <Compile Include="Assets\Scripts\StatsManager.cs" />
      <Compile Include="Assets\Scripts\TerrainScript.cs" />
+     <Compile Include="Assets\Scripts\TeslaBulletScript.cs" />
      <Compile Include="Assets\Scripts\TurretAI.cs" />
      <Compile Include="Assets\Scripts\TurretData.cs" />
   </ItemGroup>

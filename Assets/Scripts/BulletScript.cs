@@ -10,6 +10,8 @@ public class BulletScript : MonoBehaviour {
 	public GameObject hitParticle;
 	public GameObject parentUnit;
 	public float range;
+	public Transform target;
+	public HealthScript oh;
 
 	void Start () {
 		Destroy(gameObject,life);
@@ -17,7 +19,7 @@ public class BulletScript : MonoBehaviour {
 
 	void OnTriggerEnter (Collider other) {
 		
-		HealthScript oh = other.gameObject.GetComponent<HealthScript>();
+		oh = other.gameObject.GetComponent<HealthScript>();
 		if (oh) {
 			if (oh.faction != faction) {
 				Destroy (gameObject);

@@ -35,7 +35,7 @@ public class TurretAI : MonoBehaviour {
 	GameObject fireParticle;
 	float damage;
 	float apFactor;
-	float inaccuracy;
+	public float inaccuracy;
 	float firerate;
 	float bulletForce;
 	int amount;
@@ -280,5 +280,6 @@ public class TurretAI : MonoBehaviour {
 		ns.faction = faction;
 		ns.range = range;
 		ns.parentUnit = gameObject;
+		ns.target = target;
 	}
 }

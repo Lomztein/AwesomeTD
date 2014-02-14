@@ -1,18 +1,19 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\FragBulletScript.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\TeslaBulletScript.cs">
     <Files>
-      <File FileName="Assets\Scripts\MouseScript.cs" Line="73" Column="34" />
+      <File FileName="Assets\Scripts\TeslaBulletScript.cs" Line="35" Column="4" />
+      <File FileName="Assets\Scripts\MouseScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\EnemyStatsController.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\EnemyInfantryAI.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\TurretAI.cs" Line="90" Column="1" />
+      <File FileName="Assets\Scripts\TurretAI.cs" Line="286" Column="1" />
       <File FileName="Assets\Scripts\GUIScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\BulletScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\BulletScript.cs" Line="22" Column="3" />
       <File FileName="Assets\Scripts\CameraScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\TerrainScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\StatsManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\EnemySpawner.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\FragBulletScript.cs" Line="26" Column="49" />
+      <File FileName="Assets\Scripts\FragBulletScript.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
