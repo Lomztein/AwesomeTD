@@ -14,6 +14,7 @@ public class CameraScript : MonoBehaviour {
 	public Quaternion camRot;
 	public bool onTurret;
 	public Transform turretView;
+	TurretAI viewAI;
 
 	MouseScript ms;
 
@@ -64,7 +65,9 @@ public class CameraScript : MonoBehaviour {
 		}
 	}
 
-	public void ChangeView (Transform newView) {
+	public void ChangeView (Transform newView, TurretAI newAI) {
+		viewAI = newAI;
+		viewAI.playerControlled = true;
 		turretView = newView;
 		onTurret = true;
 		transform.position = newView.position;
@@ -73,6 +76,7 @@ public class CameraScript : MonoBehaviour {
 	}
 
 	public void ResetView () {
+		viewAI.playerControlled = false;
 		onTurret = false;
 		turretView = null;
 		transform.position = camPos;

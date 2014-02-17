@@ -9,14 +9,23 @@ public class BulletScript : MonoBehaviour {
 	public float life = 5;
 	public GameObject hitParticle;
 	public GameObject parentUnit;
+	public float speed;
 	public float range;
 	public Transform target;
 	public HealthScript oh;
 	public bool destroyOnHit = true;
 	public bool doNativeDamage = true;
+	public bool destroyAfterSetTime = true;
 
 	void Start () {
-		Destroy(gameObject,life);
+
+		if (destroyAfterSetTime) {
+			if (life == 0) {
+				life = range / speed;
+			}else{
+				Destroy(gameObject,life);
+			}
+		}
 	}
 
 	void OnTriggerEnter (Collider other) {

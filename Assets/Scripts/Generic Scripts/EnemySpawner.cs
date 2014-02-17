@@ -9,6 +9,8 @@ public class EnemySpawner : MonoBehaviour {
 	private StatsManager stats;
 	public float[] spawnFrequency;
 	public float mapWidth;
+	public int startingSpawnFrequency;
+	public int minSpawnFrequency;
 	
 	// Use this for initialization
 	void Start () {
@@ -17,7 +19,7 @@ public class EnemySpawner : MonoBehaviour {
 		spawnFrequency = new float[enemyTypes.Length];
 		
 		for (int i=0;i<spawnFrequency.Length;i++)  {
-			spawnFrequency[i] = 200;
+			spawnFrequency[i] = startingSpawnFrequency;
 		}
 	}
 	
@@ -50,8 +52,8 @@ public class EnemySpawner : MonoBehaviour {
 		int index = -1;
 		foreach (float frequency in spawnFrequency) {
 			index++;
-			if (index * wavesBetweenEnemies <= stats.wave && frequency > 5) {
-				spawnFrequency[index] -= 1 * stats.difficulty;
+			if (index * wavesBetweenEnemies <= stats.wave && frequency > minSpawnFrequency) {
+				spawnFrequency[index] -= Mathf.Max (1 * stats.difficulty,minSpawnFrequency);
 			}
 		}
 	}

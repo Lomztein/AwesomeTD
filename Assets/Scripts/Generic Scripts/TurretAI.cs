@@ -5,6 +5,8 @@ public class TurretAI : MonoBehaviour {
 
 	public string standName;
 	public string standDiscription;
+	public bool playerControlled;
+	public float maxFireAngle = 5;
 
 	public string faction;
 	public GameObject turret;
@@ -42,11 +44,12 @@ public class TurretAI : MonoBehaviour {
 	float sequenceTime;
 
 	float bulletVel;
+	//Transform mouse;
 	
 	// Use this for initialization
 	void Start () {
 
-		firerateUpgradeFactor = firerate * (upgradeFactor-1);
+		//mouse = GameObject.Find ("_MOUSEPOINTER").transform;
 		size = GetComponent<SphereCollider>().radius;
 		if (turret.transform.childCount > 0) {
 			GetTurretData (turret.transform.GetChild (0).gameObject);
@@ -113,9 +116,9 @@ public class TurretAI : MonoBehaviour {
 
 	void FixedUpdate () {
 
-			if (model) {
+		if (model && playerControlled == false) {
 
-				nearbyColliders = Physics.OverlapSphere(transform.position,range);
+			nearbyColliders = Physics.OverlapSphere(transform.position,range);
 
 				if (target) {
 					if (Vector3.Distance (transform.position,target.position) > range) {
@@ -147,25 +150,36 @@ public class TurretAI : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if (model) {
+		if (playerControlled == false) {
 
-			if (target) {
-				targetPos = CalculateFuturePosition(target.position,targetC.velocity,bulletVel);
-				Fire ();
-			}else{
-				if (nearbyEnemies.Length != 0) {
-					FindClosest ();
+			if (model) {
+
+				if (target) {
+					float angle = Vector3.Distance (turret.transform.rotation.eulerAngles,pointer.rotation.eulerAngles);
+					Debug.Log (angle);
+					targetPos = CalculateFuturePosition(target.position,targetC.velocity,bulletVel);
+					if (angle < maxFireAngle) {
+						Fire ();
+					}
+				}else{
+					if (nearbyEnemies.Length != 0) {
+						FindClosest ();
+					}
 				}
+
+				pointer.LookAt(targetPos);
+				turret.transform.rotation = Quaternion.RotateTowards(turret.transform.rotation,pointer.rotation,turnSpeed * 10 * Time.deltaTime);
+
 			}
 
-			pointer.LookAt(targetPos);
-			turret.transform.rotation = Quaternion.Lerp (turret.transform.rotation,pointer.rotation,turnSpeed * Time.deltaTime);
-
-		}
-
-		if (upgrade) {
-			Upgrade ();
-			upgrade = false;
+			if (upgrade) {
+				Upgrade ();
+				upgrade = false;
+			}
+		}else{
+			GetPlayerInput();
+			//pointer.LookAt(mouse);
+			//turret.transform.rotation = Quaternion.RotateTowards(turret.transform.rotation,pointer.rotation,turnSpeed * 10 * Time.deltaTime);
 		}
 	}
 
@@ -281,5 +295,20 @@ public class TurretAI : MonoBehaviour {
 		ns.range = range;
 		ns.parentUnit = gameObject;
 		ns.target = target;
+		ns.speed = bulletVel;
+	}
+
+	void GetPlayerInput () {
+
+		float mouseX = -Input.GetAxis("Mouse Y");
+		float mouseY = Input.GetAxis("Mouse X");
+
+		Vector3 newRot = new Vector3 (mouseX * Time.deltaTime * turnSpeed*10, mouseY * Time.deltaTime * turnSpeed*10, -turret.transform.rotation.eulerAngles.z);
+		turret.transform.Rotate (newRot);
+
+		if (Input.GetButton("Fire1")) {
+			Fire ();
+		}
+
 	}
 }

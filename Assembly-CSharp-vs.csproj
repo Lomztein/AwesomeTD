@@ -46,21 +46,22 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\BlastScript.cs" />
-     <Compile Include="Assets\Scripts\BulletScript.cs" />
-     <Compile Include="Assets\Scripts\CameraScript.cs" />
-     <Compile Include="Assets\Scripts\EnemyInfantryAI.cs" />
-     <Compile Include="Assets\Scripts\EnemySpawner.cs" />
-     <Compile Include="Assets\Scripts\EnemyStatsController.cs" />
-     <Compile Include="Assets\Scripts\FragBulletScript.cs" />
-     <Compile Include="Assets\Scripts\GUIScript.cs" />
-     <Compile Include="Assets\Scripts\HealthScript.cs" />
-     <Compile Include="Assets\Scripts\MouseScript.cs" />
-     <Compile Include="Assets\Scripts\ParticleScript.cs" />
-     <Compile Include="Assets\Scripts\StatsManager.cs" />
-     <Compile Include="Assets\Scripts\TerrainScript.cs" />
-     <Compile Include="Assets\Scripts\TurretAI.cs" />
-     <Compile Include="Assets\Scripts\TurretData.cs" />
+     <Compile Include="Assets\Scripts\Generic Scripts\BulletScript.cs" />
+     <Compile Include="Assets\Scripts\Generic Scripts\CameraScript.cs" />
+     <Compile Include="Assets\Scripts\Generic Scripts\EnemyInfantryAI.cs" />
+     <Compile Include="Assets\Scripts\Generic Scripts\EnemySpawner.cs" />
+     <Compile Include="Assets\Scripts\Generic Scripts\EnemyStatsController.cs" />
+     <Compile Include="Assets\Scripts\Generic Scripts\GUIScript.cs" />
+     <Compile Include="Assets\Scripts\Generic Scripts\HealthScript.cs" />
+     <Compile Include="Assets\Scripts\Generic Scripts\MouseScript.cs" />
+     <Compile Include="Assets\Scripts\Generic Scripts\ParticleScript.cs" />
+     <Compile Include="Assets\Scripts\Generic Scripts\StatsManager.cs" />
+     <Compile Include="Assets\Scripts\Generic Scripts\TerrainScript.cs" />
+     <Compile Include="Assets\Scripts\Generic Scripts\TurretAI.cs" />
+     <Compile Include="Assets\Scripts\Generic Scripts\TurretData.cs" />
+     <Compile Include="Assets\Scripts\Special Bullet Scripts\BlastScript.cs" />
+     <Compile Include="Assets\Scripts\Special Bullet Scripts\FragBulletScript.cs" />
+     <Compile Include="Assets\Scripts\Special Bullet Scripts\LaserBulletScript.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

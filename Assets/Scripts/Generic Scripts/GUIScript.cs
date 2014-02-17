@@ -76,7 +76,7 @@ public class GUIScript : MonoBehaviour {
 			TurretAI newAI = ms.focusTurret.GetComponent<TurretAI>();
 			if (GUI.Button (new Rect(pos.x-70,pos.y-20,40,40),"C")) {
 				Transform newCamView = newAI.cameraView;
-				Camera.main.GetComponent<CameraScript>().ChangeView (newCamView);
+				Camera.main.GetComponent<CameraScript>().ChangeView (newCamView, newAI);
 				ms.focusTurret = null;
 				ms.showTurretOptions = false;
 			}
